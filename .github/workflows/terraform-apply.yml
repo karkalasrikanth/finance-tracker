@@ -40,7 +40,12 @@ jobs:
         run: terraform init
 
       - name: Plan
-        run: terraform plan -out=tfplan
+        env:
+          TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
+        run: |
+          terraform plan \
+            -var-file=tfvars/${{ github.event.inputs.environment }}.tfvars \
+            -out=tfplan
 
       - name: Upload Plan
         uses: actions/upload-artifact@v4

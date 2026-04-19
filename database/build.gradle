@@ -1,0 +1,22 @@
+plugins{
+    id 'java'
+    id 'org.flywaydb.flyway' version '9.22.3'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.postgresql:postgresql:42.7.3'
+}
+
+flyway {
+    url = project.findProperty("flywayUrl") ?: System.getenv("FLYWAY_URL")
+    user = project.findProperty("flywayUser") ?: System.getenv("FLYWAY_USER")
+    password = project.findProperty("flywayPassword") ?: System.getenv("FLYWAY_PASSWORD")
+
+    locations = ['filesystem:migrations']
+    baselineOnMigrate = true
+    cleanDisabled = true   // safety: prevents accidental DB wipe
+}

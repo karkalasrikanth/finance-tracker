@@ -1,0 +1,37 @@
+<div class="card">
+  <h3>Summary</h3>
+  <p>Income: {{ data()?.summary?.totalIncome }}</p>
+  <p>Expense: {{ data()?.summary?.totalExpense }}</p>
+</div>
+<div class="card">
+  <h3>Budget Health</h3>
+  @for (budget of data()?.budgetHealth; track budget.category) {
+    <div>
+      <p>
+        {{ budget.category }} - {{ budget.status }}
+        ({{ budget.usagePercent }}%)
+      </p>
+    </div>
+  }
+</div>
+<!-- Transactions -->
+<div class="card">
+  <h3>Recent Transactions</h3>
+  @for (t of data()?.recentTransactions; track t.id) {
+    <div>
+      <p>
+        {{ t.category }} - {{ t.amount }} - {{ t.type }}
+      </p>
+    </div>
+  }
+</div>
+
+<!-- Insights -->
+<div class="card">
+  <h3>Insights</h3>
+  <ul>
+    @for (i of data()?.insights; track i.id) {
+      <li>{{ i }}</li>
+    }
+  </ul>
+</div>

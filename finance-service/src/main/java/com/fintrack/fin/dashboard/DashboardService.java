@@ -9,6 +9,8 @@ import com.fintrack.fin.transaction.TransactionRepository;
 import com.fintrack.fin.transaction.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -23,6 +25,7 @@ public class DashboardService {
     private final TransactionRepository transactionRepository;
     private final InsightService insightService;
 
+    @Transactional(rollbackFor = Exception.class)
     public DashboardResponse getDashboard(Long userId, YearMonth month) {
 
         // Summary

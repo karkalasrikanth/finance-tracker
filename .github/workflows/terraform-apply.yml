@@ -29,7 +29,8 @@ on:
       custom_args:
         description: "Custom terraform args (used only when action=custom)"
         required: false
-
+env:
+  region: us-east-2
 jobs:
   terraform:
     runs-on: ubuntu-latest
@@ -50,7 +51,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: us-east-1
+          aws-region: ${{ env.region }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3

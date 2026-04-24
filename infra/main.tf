@@ -14,8 +14,9 @@ module "ecr" {
 
 module "load-balancer" {
   source        = "./modules/load-balancer"
-  alb_sg        = module.vpc
-  public_subnet = module.vpc.private_subnet_id
+  vpc_id        = module.vpc.vpc_id
+  alb_sg        = module.vpc.alb_sg
+  public_subnet = module.vpc.public_subnet_id
 }
 module "ecs" {
   source             = "./modules/ecs"

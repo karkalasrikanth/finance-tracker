@@ -1,2 +1,2 @@
-aws_region   = "us-east-1"
-db_username  = "postgres"
+aws_region  = "us-east-2"
+db_username = "postgres"

@@ -1,5 +1,8 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_s3_bucket" "finance_ui" {
-  bucket = "finance-ui"
+  bucket = "finance-ui-${data.aws_caller_identity.current.account_id}"
+
 }
 
 resource "aws_s3_bucket_public_access_block" "finance_ui" {

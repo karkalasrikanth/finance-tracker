@@ -1,45 +1,38 @@
+
 data "aws_caller_identity" "current" {}
 
 resource "aws_s3_bucket" "finance_ui" {
   bucket = "finance-ui-${data.aws_caller_identity.current.account_id}"
 
+  tags = {
+    Project   = "finance-ui"
+    ManagedBy = "terraform"
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "finance_ui" {
-  bucket                  = aws_s3_bucket.finance_ui.id
+  bucket = aws_s3_bucket.finance_ui.id
+
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
 
+resource "aws_s3_bucket_ownership_controls" "finance_ui" {
+  bucket = aws_s3_bucket.finance_ui.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
 resource "aws_cloudfront_origin_access_control" "ui" {
   name                              = "finance-ui-oac"
-  description                       = "OAC for S3 UI"
+  description                       = "OAC for Finance UI"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
-}
-
-resource "aws_s3_bucket_policy" "ui" {
-  bucket = aws_s3_bucket.finance_ui.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Principal = {
-        Service = "cloudfront.amazonaws.com"
-      }
-      Action   = "s3:GetObject"
-      Resource = "${aws_s3_bucket.finance_ui.arn}/*"
-      Condition = {
-        StringEquals = {
-          "AWS:SourceArn" = aws_cloudfront_distribution.ui.arn
-        }
-      }
-    }]
-  })
 }
 
 resource "aws_cloudfront_distribution" "ui" {
@@ -62,12 +55,8 @@ resource "aws_cloudfront_distribution" "ui" {
 
     compress = true
 
-    forwarded_values {
-      query_string = false
-      cookies {
-        forward = "none"
-      }
-    }
+    cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be7d6b"
+    origin_request_policy_id = "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf"
   }
 
   custom_error_response {

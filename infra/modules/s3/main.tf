@@ -1,4 +1,11 @@
-
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "6.17.0"
+    }
+  }
+}
 data "aws_caller_identity" "current" {}
 
 resource "aws_s3_bucket" "finance_ui" {
@@ -80,6 +87,33 @@ resource "aws_cloudfront_distribution" "ui" {
   viewer_certificate {
     cloudfront_default_certificate = true
   }
+}
+
+resource "aws_s3_bucket_policy" "ui" {
+  bucket = aws_s3_bucket.finance_ui.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowCloudFrontAccess"
+        Effect = "Allow"
+
+        Principal = {
+          Service = "cloudfront.amazonaws.com"
+        }
+
+        Action   = "s3:GetObject"
+        Resource = "${aws_s3_bucket.finance_ui.arn}/*"
+
+        Condition = {
+          StringEquals = {
+            "AWS:SourceArn" = aws_cloudfront_distribution.ui.arn
+          }
+        }
+      }
+    ]
+  })
 }
 
 data "aws_cloudfront_cache_policy" "optimized" {

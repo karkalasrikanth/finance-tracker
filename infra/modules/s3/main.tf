@@ -55,8 +55,8 @@ resource "aws_cloudfront_distribution" "ui" {
 
     compress = true
 
-    cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be7d6b"
-    origin_request_policy_id = "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf"
+    cache_policy_id          = data.aws_cloudfront_cache_policy.optimized.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host.id
   }
 
   custom_error_response {
@@ -80,4 +80,12 @@ resource "aws_cloudfront_distribution" "ui" {
   viewer_certificate {
     cloudfront_default_certificate = true
   }
+}
+
+data "aws_cloudfront_cache_policy" "optimized" {
+  name = "Managed-CachingOptimized"
+}
+
+data "aws_cloudfront_origin_request_policy" "all_viewer_except_host" {
+  name = "Managed-AllViewerExceptHostHeader"
 }
